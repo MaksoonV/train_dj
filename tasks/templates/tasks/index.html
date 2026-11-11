@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="ru">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Мой первый Django-сайт</title>
+    <style>
+        * { box-sizing: border-box; }
+        body { margin: 0; background: #f3f5f2; color: #20352b; font: 17px/1.6 system-ui, sans-serif; }
+        main { max-width: 760px; margin: 60px auto; padding: 24px; }
+        .tag { color: #46765b; font-size: 13px; font-weight: 700; letter-spacing: .12em; }
+        h1 { font-size: clamp(30px, 6vw, 46px); line-height: 1.15; margin: 12px 0; }
+        .intro { color: #526558; }
+        .panel { background: white; padding: 24px; border: 1px solid #dce4dd; border-radius: 18px; margin-top: 28px; }
+        .add { display: flex; flex-wrap: wrap; gap: 12px; }
+        label { display: block; font-weight: 600; margin-bottom: 8px; }
+        input { flex: 1; min-width: 180px; border: 1px solid #aebdb2; border-radius: 8px; padding: 12px; font: inherit; }
+        button { cursor: pointer; border: 1px solid transparent; border-radius: 8px; padding: 10px 16px; background: #226342; color: white; font: inherit; }
+        button:hover { filter: brightness(.9); }
+        button:focus-visible, input:focus-visible { outline: 3px solid #b67616; outline-offset: 3px; }
+        ul { list-style: none; padding: 0; }
+        li { display: flex; align-items: center; flex-wrap: wrap; gap: 10px; padding: 16px 0; border-bottom: 1px solid #e6ebe6; }
+        .title { flex: 1; min-width: 140px; overflow-wrap: anywhere; }
+        .done { text-decoration: line-through; color: #68786d; }
+        .secondary { background: #eaf2ec; color: #245639; }
+        .delete { background: transparent; border-color: #e4cdca; color: #913d35; }
+        .errorlist { color: #a02e25; }
+        .empty, footer { color: #526558; }
+        details { margin-top: 24px; }
+        code { background: #eaf2ec; padding: 2px 5px; border-radius: 4px; }
+        @media (max-width: 480px) { main { margin: 20px auto; padding: 16px; } .panel { padding: 16px; } }
+    </style>
+</head>
+<body>
+<main>
+    <div class="tag">УЧЕБНЫЙ ПРОЕКТ · PYTHON + DJANGO</div>
+    <h1>Маленькие задачи.<br>Первый понятный сайт.</h1>
+    <p class="intro">Добавь задачу, выполни её и посмотри, как это устроено в коде.</p>
+    <section class="panel" aria-label="Список задач">
+        <form method="post" action="{% url 'tasks:index' %}">
+            {# Токен защищает отправку формы от подделки запроса с чужого сайта. #}
+            {% csrf_token %}
+            <label for="{{ form.title.id_for_label }}">Новая задача</label>
+            {{ form.title.errors }}
+            <div class="add">{{ form.title }}<button type="submit">Добавить</button></div>
+        </form>
+        <ul>
+            {# Django повторяет этот HTML для каждой задачи из views.py. #}
+            {% for task in tasks %}
+            <li>
+                <span class="title {% if task.done %}done{% endif %}">{{ task.title }}</span>
+                <form method="post" action="{% url 'tasks:toggle' task.pk %}">
+                    {% csrf_token %}
+                    <button class="secondary" type="submit" aria-label="{% if task.done %}Вернуть задачу{% else %}Выполнить задачу{% endif %}: {{ task.title }}">{% if task.done %}Вернуть{% else %}Готово{% endif %}</button>
+                </form>
+                <form method="post" action="{% url 'tasks:delete' task.pk %}">
+                    {% csrf_token %}
+                    <button class="delete" type="submit" aria-label="Удалить задачу: {{ task.title }}">Удалить</button>
+                </form>
+            </li>
+            {% empty %}
+            <li class="empty">Пока пусто. Добавь свою первую задачу ↑</li>
+            {% endfor %}
+        </ul>
+    </section>
+    <details>
+        <summary>Что происходит под капотом?</summary>
+        <p>Адрес попадает в <code>urls.py</code>, затем вызывается функция из <code>views.py</code>. Она читает или меняет задачи через <code>models.py</code> и возвращает HTML из этого шаблона.</p>
+        <p>Задачи хранятся в файле <code>db.sqlite3</code> и остаются после перезапуска.</p>
+    </details>
+    <footer><p>Начни изучение с README.md в папке проекта.</p></footer>
+</main>
+</body>
+</html>

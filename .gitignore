@@ -1,0 +1,39 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+build/
+dist/
+
+# Віртуальні оточення
+.venv/
+venv/
+env/
+
+# Django
+db.sqlite3
+db.sqlite3-journal
+*.sqlite3
+*.log
+media/
+staticfiles/
+local_settings.py
+
+# Секрети
+.env
+.env.*
+
+# Тести і покриття
+.coverage
+htmlcov/
+.pytest_cache/
+
+# IDE та редактори
+.idea/
+.vscode/
+*.swp
+
+# ОС
+.DS_Store
+Thumbs.db
+desktop.ini
